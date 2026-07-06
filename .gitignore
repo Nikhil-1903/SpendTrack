@@ -1,18 +1,13 @@
 # Python
+venv/
 __pycache__/
 *.py[cod]
-*.sqlite3
-venv/
+
+# Local development database
+db.sqlite3
+
+# Environment variables
 .env
 
-# React / Node.js
+# React
 node_modules/
-dist/
-build/
-
-# VS Code
-.vscode/
-
-# OS files
-.DS_Store
-Thumbs.db
