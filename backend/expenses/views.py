@@ -1,5 +1,5 @@
-from django.http import HttpResponse                          # Send text back to the browser
-
+from django.shortcuts import render
+from .models import Expense
 # -------------------------------------------------------------------------
 # View: hello
 #
@@ -10,12 +10,26 @@ from django.http import HttpResponse                          # Send text back t
 # response -> Information sent back to the browser.
 # -------------------------------------------------------------------------
 
+from django.http import HttpResponse
+
 def hello(request):
-    """
-    This is our first Django view.
-
-    Whenever the browser visits the URL mapped to this function,
-    Django calls this function automatically.
-    """
-
     return HttpResponse("Hello from Django!")
+
+
+
+
+def expense_list(request):
+    # Fetch all expenses from the database.
+
+    # Get all expense objects from the database.
+    expenses = Expense.objects.all()
+
+    # This string will hold the response we send to the browser.
+    response = ""
+
+    # Loop through every expense object.
+    for expense in expenses:
+        response += expense.title + "<br>"
+
+    # Send the final text back to the browser.
+    return render(request, "expenses/expense_list.html", {"expenses" : expenses})

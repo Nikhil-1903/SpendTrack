@@ -22,4 +22,5 @@ from expenses import views                # Use functions from expenses/views.py
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', views.hello),
+    path('expenses/', views.expense_list),
 ]
