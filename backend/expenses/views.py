@@ -33,3 +33,10 @@ def expense_list(request):
 
     # Send the final text back to the browser.
     return render(request, "expenses/expense_list.html", {"expenses" : expenses})
+
+def add_expense(request):
+    if request.method == "GET":
+        return render(request, "expenses/add_expense.html")
+
+    elif request.method == "POST":
+        return HttpResponse("Saving Expense")

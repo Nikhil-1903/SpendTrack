@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Expense</title>
+</head>
+<body>
+
+    <h1>Add Expense</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <label>Title:</label><br>
+        <input type="text" name="title"><br><br>
+
+        <label>Amount:</label><br>
+        <input type="number" name="amount"><br><br>
+
+        <input type="submit" value="Save Expense">
+
+    </form>
+
+    <br>
+
+    <a href="/expenses/">← Back</a>
+
+</body>
+</html>
