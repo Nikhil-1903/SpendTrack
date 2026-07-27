@@ -1,14 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Expense
-# -------------------------------------------------------------------------
-# View: hello
-#
-# A view is a Python function that receives an HTTP request
-# and returns an HTTP response.
-#
-# request  -> Information sent by the browser.
-# response -> Information sent back to the browser.
-# -------------------------------------------------------------------------
+from .forms import ExpenseForm
 
 from django.http import HttpResponse
 
@@ -35,8 +27,19 @@ def expense_list(request):
     return render(request, "expenses/expense_list.html", {"expenses" : expenses})
 
 def add_expense(request):
-    if request.method == "GET":
-        return render(request, "expenses/add_expense.html")
+    if request.method == "POST":
+        form = ExpenseForm(request.POST)
+        # If user gives invalid values we not refresh it in the form to avoid rewrite all form again.
 
-    elif request.method == "POST":
-        return HttpResponse("Saving Expense")
+        if form.is_valid():
+            form.save()
+            return redirect("expense_list")
+
+    else:
+        form = ExpenseForm()
+
+    return render(
+        request,
+        "expenses/add_expense.html",
+        {"form": form},
+    )

@@ -10,11 +10,7 @@
     <form method="post">
         {% csrf_token %}
         
-        <label>Title:</label><br>
-        <input type="text" name="title"><br><br>
-
-        <label>Amount:</label><br>
-        <input type="number" name="amount"><br><br>
+        {{ form.as_p}}
 
         <input type="submit" value="Save Expense">
 
