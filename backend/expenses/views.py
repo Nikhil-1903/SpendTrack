@@ -43,3 +43,23 @@ def add_expense(request):
         "expenses/add_expense.html",
         {"form": form},
     )
+
+
+def edit_expense(request, id):
+    expense = Expense.objects.get(id=id)
+
+    if request.method == "POST":
+        form = ExpenseForm(request.POST, instance=expense)
+
+        if form.is_valid():
+            form.save()
+            return redirect("expense_list")
+
+    else:
+        form = ExpenseForm(instance=expense)
+
+    return render(
+        request,
+        "expenses/add_expense.html",
+        {"form": form},
+    )
