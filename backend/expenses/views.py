@@ -49,7 +49,8 @@ def edit_expense(request, id):
     expense = Expense.objects.get(id=id)
 
     if request.method == "POST":
-        form = ExpenseForm(request.POST, instance=expense)
+        form = ExpenseForm(request.POST, instance=expense)  
+        # instance parameter makes it UPDATE instead of INSERT.
 
         if form.is_valid():
             form.save()
@@ -63,3 +64,26 @@ def edit_expense(request, id):
         "expenses/add_expense.html",
         {"form": form},
     )
+
+
+def delete_expense(request, id):
+    # Fetch the expense object that the user wants to delete.
+    expense = Expense.objects.get(id=id)
+
+    # Show the confirmation page when the user first clicks Delete.
+    if request.method == "GET":
+        return render(
+            request,
+            "expenses/delete_expense.html",
+            {"expense": expense},
+        )
+
+    # The user confirmed deletion by submitting the form.
+    # Remove the expense from the database.
+    expense.delete()
+
+    # After deleting, return to the expense list.
+    return redirect("expense_list")
+
+print("Views module loaded")
+print(delete_expense)
