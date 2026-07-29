@@ -14,8 +14,14 @@ def expense_list(request):
     # Fetch all expenses from the database.
 
     # Get all expense objects from the database.
-    expenses = Expense.objects.all()
+    # expenses = Expense.objects.all()
 
+    category = request.GET.get("category")
+
+    if category:
+        expenses = Expense.objects.filter(category__icontains=category)
+    else:
+        expenses = Expense.objects.all()
     # This string will hold the response we send to the browser.
     response = ""
 
