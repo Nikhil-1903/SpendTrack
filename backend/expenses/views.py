@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
 from .models import Expense
 from .forms import ExpenseForm
-
 from django.http import HttpResponse
 
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .serializers import ExpenseSerializer
+
 def hello(request):
+
     return HttpResponse("Hello from Django!")
 
 
@@ -93,3 +97,28 @@ def delete_expense(request, id):
 
 print("Views module loaded")
 print(delete_expense)
+
+@api_view(["GET", "POST"])
+def expense_api(request):
+    # Fetch all expenses from the database.
+    # ----------------  GET  ----------------
+    if request.method == "GET":
+        expenses = Expense.objects.all()
+
+        # Convert Expense objects into JSON.
+        serializer = ExpenseSerializer(expenses, many = True)
+
+        # Return the JSON response.
+        return Response(serializer.data)
+
+    # ----------------  POST  ----------------
+    serializer = ExpenseSerializer(data=request.data)
+
+    if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+    
+    return Response(serializer.errors, status=400)
+
+
+
