@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Expense
 from .forms import ExpenseForm
 from django.http import HttpResponse
@@ -112,6 +112,7 @@ def expense_api(request):
         return Response(serializer.data)
 
     # ----------------  POST  ----------------
+    # The data= keyword switches the serializer into input/validation mode.
     serializer = ExpenseSerializer(data=request.data)
 
     if serializer.is_valid():
@@ -120,5 +121,35 @@ def expense_api(request):
     
     return Response(serializer.errors, status=400)
 
+@api_view(["GET", "PUT", "DELETE"])
+def expense_detail_api(request, id):
 
+    # Fetch the expense using its ID.
+    # expense = Expense.objects.get(id=id)
+    expense = get_object_or_404(Expense, id=id)
 
+    # ------------ GET ------------
+    if request.method == "GET":
+        serializer = ExpenseSerializer(expense)
+        return Response(serializer.data)
+
+    # ------------ PUT ------------
+    if request.method == "PUT":
+        serializer = ExpenseSerializer(
+            expense,
+            data=request.data,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+
+    # ------------ DELETE ------------
+    if request.method == "DELETE":
+        # Delete the existing expense from the database.
+        expense.delete()
+
+        # 204 = successful request, no response body.
+        return Response(status=204)
