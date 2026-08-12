@@ -121,7 +121,7 @@ def expense_api(request):
     
     return Response(serializer.errors, status=400)
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PUT", "DELETE", "PATCH"])
 def expense_detail_api(request, id):
 
     # Fetch the expense using its ID.
@@ -138,6 +138,20 @@ def expense_detail_api(request, id):
         serializer = ExpenseSerializer(
             expense,
             data=request.data,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+
+    # ------------ PATCH ------------
+    if request.method == "PATCH":
+        serializer = ExpenseSerializer(
+            expense,
+            data=request.data,
+            partial=True,
         )
 
         if serializer.is_valid():
