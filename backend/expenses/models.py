@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # -----------------------------------------------------------------------------
 # Expense Model
@@ -16,6 +17,12 @@ class Expense(models.Model):
     Stores information about a single expense.
     Every object of this class corresponds to one row in the database.
     """
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
 
     # Title of the expense e.g. "Pizza", "Netflix", "Electricity Bill"
     

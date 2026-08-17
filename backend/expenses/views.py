@@ -4,14 +4,13 @@ from .forms import ExpenseForm
 from django.http import HttpResponse
 
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from .serializers import ExpenseSerializer
 
 def hello(request):
 
     return HttpResponse("Hello from Django!")
-
-
 
 
 def expense_list(request):
@@ -99,6 +98,7 @@ print("Views module loaded")
 print(delete_expense)
 
 @api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
 def expense_api(request):
     # Fetch all expenses from the database.
     # ----------------  GET  ----------------
@@ -122,6 +122,7 @@ def expense_api(request):
     return Response(serializer.errors, status=400)
 
 @api_view(["GET", "PUT", "DELETE", "PATCH"])
+@permission_classes([IsAuthenticated])
 def expense_detail_api(request, id):
 
     # Fetch the expense using its ID.
@@ -155,7 +156,7 @@ def expense_detail_api(request, id):
         )
 
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data)
 
         return Response(serializer.errors, status=400)
