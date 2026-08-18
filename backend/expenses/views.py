@@ -103,7 +103,8 @@ def expense_api(request):
     # Fetch all expenses from the database.
     # ----------------  GET  ----------------
     if request.method == "GET":
-        expenses = Expense.objects.all()
+        # Fetch only expenses belonging to the logged-in user.
+        expenses = Expense.objects.filter(user=request.user)
 
         # Convert Expense objects into JSON.
         serializer = ExpenseSerializer(expenses, many = True)
@@ -127,7 +128,7 @@ def expense_detail_api(request, id):
 
     # Fetch the expense using its ID.
     # expense = Expense.objects.get(id=id)
-    expense = get_object_or_404(Expense, id=id)
+    expense = get_object_or_404(Expense, id=id, user=request.user,)
 
     # ------------ GET ------------
     if request.method == "GET":
