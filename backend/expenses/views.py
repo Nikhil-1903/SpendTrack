@@ -1,3 +1,5 @@
+from django.core import paginator
+from django.db.migrations import serializer
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Expense
 from .forms import ExpenseForm
@@ -7,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ExpenseSerializer
+from rest_framework.pagination import PageNumberPagination
+
 
 def hello(request):
 
@@ -103,15 +107,22 @@ def expense_api(request):
     # Fetch all expenses from the database.
     # ----------------  GET  ----------------
     if request.method == "GET":
+
+        print("Authenticated user:", request.user)
+        print("User ID:", request.user.id)
         # Fetch only expenses belonging to the logged-in user.
         expenses = Expense.objects.filter(user=request.user)
 
+        # Create a paginator.
+        paginator = PageNumberPagination()
+        paginator.page_size = 5
+        # Get the expenses for the requested page.
+        page = paginator.paginate_queryset(expenses, request)
         # Convert Expense objects into JSON.
-        serializer = ExpenseSerializer(expenses, many = True)
+        serializer = ExpenseSerializer(page, many = True)
 
         # Return the JSON response.
-        return Response(serializer.data)
-
+        return paginator.get_paginated_response(serializer.data)
     # ----------------  POST  ----------------
     # The data= keyword switches the serializer into input/validation mode.
     serializer = ExpenseSerializer(data=request.data)
